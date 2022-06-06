@@ -1,0 +1,148 @@
+{{! <script defer src="https://cdn.crop.guide/loader/l.js?c=FQNHBG"></script> }}
+<section class="mt-3">
+  <div class="container-fluid">
+    <h3>Add Product</h3>
+    <div class="row m-5">
+      <div
+        class="col-md-10 pb-4 pt-4 shadow-lg p-3 mb-5 bg-body rounded border border-dark"
+      >
+        <form enctype="multipart/form-data" method="post" action="/admin/add-products">
+          <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Title</label>
+            <input
+              type="text"
+              class="form-control"
+              name="title"
+              id="title"
+              onkeyup="validTitle()"
+            />
+            <span id="title-error" class="text-danger text-center"></span>
+          </div>
+          <div class="mb-3">
+            <label
+              for="exampleInputPassword1"
+              class="form-label"
+            >Category</label>
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              name="category"
+              id="category"
+              onselect="validCategory()"
+            >
+              <option selected>Default</option>
+              {{#each category}}
+                <option
+                  value="{{this.category-name}}"
+                >{{this.category-name}}</option>
+              {{/each}}
+            </select>
+            <span id="category-error" class="text-danger text-center"></span>
+          </div>
+          <div class="mb-3">
+            <label
+              for="exampleInputPassword1"
+              class="form-label"
+            >Description</label>
+            <input
+              type="text"
+              class="form-control"
+              name="description"
+              id="description"
+              onkeyup="validDescription()"
+            />
+            <span id="description-error" class="text-danger text-center"></span>
+          </div>
+
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Storage
+              Specification</label>
+            <input
+              type="text"
+              class="form-control"
+              name="storage-spec"
+              id="spec"
+              onkeyup="validSpecification()"
+            />
+            <span id="spec-error" class="text-danger text-center"></span>
+          </div>
+
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Price</label>
+            <input
+              type="text"
+              class="form-control"
+              name="price"
+              id="price"
+              onkeyup="validPrice()"
+            />
+            <span id="price-error" class="text-danger text-center"></span>
+          </div>
+
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Godown Stock</label>
+            <input
+              type="number"
+              class="form-control"
+              name="godown-stock"
+              id="gdStock"
+              onkeyup="validGdStock()"
+            />
+            <span id="gdStock-error" class="text-danger text-center"></span>
+          </div>
+
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Status</label>
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              name="status"
+              id="status"
+              onselect="validStatus()"
+            >
+              <option selected>Default</option>
+              <option value="Available">Available</option>
+              <option value="Out of Stock">Out of Stock</option>
+            </select>
+            <span id="status-error" class="text-danger text-center"></span>
+          </div>
+
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Image Upload</label>
+            <input
+              class="form-control"
+              type="file"
+              id="formFile"
+              name="image"
+              onkeyup="validImage()"
+              multiple
+            />
+            <span id="image-error" class="text-danger text-center"></span>
+            {{#if add2Error}}
+              <span id="add-error" class="text-danger text-center">Two Files
+                Minimum Needed....</span>
+            {{/if}}
+          </div>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            onclick="return validForm()"
+          >Submit</button>
+          <button type="reset" class="btn btn-primary">Clear</button>
+
+          {{#if addError}}
+            <span id="add-error" class="text-danger text-center">Files not
+              Added....</span>
+          {{/if}}
+          {{#if addSucces}}
+            <span id="add-error" class="text-success text-center">Files
+              Added....</span>
+          {{/if}}
+        </form>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script src="/javascripts/addProductsAdminValidation.js"></script>

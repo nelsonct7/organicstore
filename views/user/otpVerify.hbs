@@ -1,0 +1,58 @@
+<section class="container-fluid">
+  
+  <div class="row d-flex justify-content-center" style="height: 568px; width: auto; background-image: url(/images/farmbg.jpg); background-repeat: no-repeat; background-size: 250vh;">
+      
+<div class="col-3 d-flex justify-content-center mt-5 rounded" id="content-wrapper">
+          
+<form action="/otpauth/{{number}}" method="post">
+<span class="label label-success"><h3>OTP Verification</h3></span>
+  <div class="mb-3">
+    <input type="hidden" value="{{dbResponse.user_name}}" name="user">
+    <label for="exampleInputEmail1" class="form-label">Enter the otp send to this number : {{number}} </label>
+    <input type="text" class="form-control" id="otp1" name="otp1" required onkeyup="validOtp()" style="text-align: center;">
+    <span id="otp-error" class="text-danger text-center"></span>
+    
+  </div>
+  <div>
+  <button type="submit" class="btn btn-primary" onclick="return validOtp()">Submit</button>
+  <button type="reset" class="btn btn-primary">Reset</button>
+  </div>
+  <div>
+    {{#if otpError}}
+  <div class="alert alert-danger text-center mt-3">
+   Invalid OTP
+  </div>
+  {{/if}}
+  </div>
+</form>
+    </div>
+    </div>
+</section>
+<style>
+  #content-wrapper{ background: rgba( 255, 255, 255, 0.25 ); box-shadow: 0 8px
+  32px 0 rgba( 31, 38, 135, 0.37 ); backdrop-filter: blur( 4px );
+  -webkit-backdrop-filter: blur( 4px ); border-radius: 10px; border: 1px solid
+  rgba( 255, 255, 255, 0.18 ); }
+</style>
+  <script>
+   var otpError = document.getElementById('otp-error');
+   
+  function validOtp(){
+    
+    var otp = document.getElementById('otp1').value;
+   
+    if(otp.length==0 || otp.length!=4){
+        otpError.innerHTML= 'Invalid OTP';
+        return false;
+    }
+    if(!otp.match(/^\d*$/)){
+        otpError.innerHTML='Numbers only';
+        return false;
+   }
+    
+    otpError.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+    return true;
+}
+ 
+ 
+</script>

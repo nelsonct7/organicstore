@@ -1,0 +1,57 @@
+<div class="row mt-5 ms-5" >
+  <div class="col-10 shadow-lg p-3 mb-5 bg-body rounded border border-dark" >
+    <div class="row " style="background-color: rgb(119, 73, 172);">
+      <div class="col-10">
+            <div class="d-flex align-items-end mt-4 mb-3" >
+            <h3 class="me-3">View Product</h3>
+            <a href="/admin/add-products" class="btn btn-success" style="margin-left: auto;">Add products</a>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+    <div class="col-10" >
+    <table class="table mt-5" id="prtable" > 
+    <thead>
+    <tr class="">
+      <th scope="col" >Title</th>
+      <th scope="col" >Category</th> 
+      <th scope="col" >Date</th>
+      <th scope="col" >Price</th>
+      <th scope="col" >Stock</th>
+      <th scope="col" >Status</th>
+      <th scope="col" >Image</th>
+      <th scope="col" >Options</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each products}}
+    <tr>
+      
+      <td>{{this.title}}</td>
+      <td>{{this.category}}</td>
+      <td>{{this.date}}</td>
+      <td>{{this.price}}</td>
+      <td>{{this.godown-stock}}</td>
+      <td>{{this.status}}</td>
+
+      <td class=""><img src="/product-images/{{this.img_path.[0]}}" alt="" style="width: 50px; height: 50px;">
+      </td>
+      <td>
+        <a href="/admin/edit-product/{{this._id}}" class="btn btn-primary">Edit</a>
+        <button type="button" class="btn btn-danger" onclick="deleteData('{{this._id}}')">Delete</button>
+        {{!-- <a href="delete-product?id={{this._id}}" class="btn btn-danger" id="delete" onclick="">Delete</a> --}}
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+      </div>
+    </div>
+
+  </div>
+</div>
+ 
+<script src="/javascripts/viewProductAdmin.js"></script>
+
+
+

@@ -1,0 +1,112 @@
+<meta charset="UTF8">
+    <script src="https://unpkg.com/js-image-zoom@0.7.0/js-image-zoom.js" type="application/javascript"></script>
+    <link rel="stylesheet" href="/stylesheets/product_view.css">
+        <div class="row container bootdey mt-3">
+
+            <section class="panel row">
+                <div class="panel-body d-flex justify-content-around">
+                    <div class="col-md-6 shadow-lg p-3 mb-5 bg-white rounded" >
+                        <div class=" ms-4" id="img-container">
+                            <img src="/product-images/{{ product.img_path.[0] }}" alt="" style="height: 400px; width: 400px;" class="big_img"></div>
+                            <div class="pro-img-list ms-4">
+                                {{#each product.img_path}}
+                                    <img src="/product-images/{{ this }}" alt="" style="width: 100px; height: 100px;" id="samll_img" class="samll_img">
+                                    {{/each}}
+                                </div>
+                            </div>
+                            <div class="col-md-4 ms-5 shadow-lg p-3 mb-5 bg-white rounded">
+                                <div class="" id="zoom" style="position :absolute;"></div>
+                                <h4 class="pro-d-title">
+                                    <a href="#" class="">
+                                        {{ product.title }}
+                                    </a>
+                                </h4>
+                                <p>
+                                    {{ product.description }}
+                                </p>
+                                <p>
+                                    {{ product.storage-spec }}
+                                </p>
+                                <div class="product_meta">
+                                    <span class="posted_in">
+                                        <strong>Categories:</strong>
+                                        <a rel="tag" href="#">{{ product.category }}</a>.</span>
+                                    <span class="posted_in">
+                                        <strong>Stock :</strong>
+                                        <a rel="tag" href="#">{{ product.godown-stock }}</a>.</span>
+                                    <span class="posted_in">
+                                        <strong>Status:</strong>
+                                        <a rel="tag" href="#">{{ product.status }}</a>.</span>
+                                </div>
+                                <div class="m-bot15">
+                                    <strong>Price :
+                                    </strong>
+                                    <span class="amount-old">{{ product.price }}</span>
+                                    <span class="pro-price">
+                                        {{ actualPrice }}</span>
+                                </div>
+                                <p>
+                                    <button class="btn btn-round btn-danger" type="button" onclick="addToCart('{{product._id}}')">
+                                        <i class="fa fa-shopping-cart"></i>
+                                        Add to Cart</button>
+                                </p>
+                                
+                            </div>
+                            
+                        </div>
+                    </section>
+
+                </div>
+
+                <script>
+                    let zm = document.getElementById('zoom')
+                    var options1 = {
+                        width:400,
+                        height:300,
+                        fillContainer: true,
+                        offset: {
+                            vertical: 10,
+                            horizontal: 0
+                        },
+                        zoomWidth: 300,
+                        zoomContainer: zm,
+                        zoomPosition:top,
+                        zoomLensStyle: {
+                            opacity: 0,
+                        },
+                        zoomStyle: {
+                            opacity: 0.3
+                        }
+                    };
+                    setImg()
+
+                    $(document).ready(function () {
+                        $(".samll_img").hover(function () {
+                            $(".big_img").attr('src', $(this).attr('src'));
+                            setImg()
+                        })
+
+                    })
+                    function setImg() {
+                        new ImageZoom(document.getElementById("img-container"), options1);
+                    }
+                </script>
+
+                <script>
+                        function addToCart(prdId) {
+                            $.ajax({
+                                url: '/add-to-cart/' + prdId,
+                                method: 'get',
+                                success: (response) => {
+                                    if (response.status) {
+                                        let count = $('#cartCount').html()
+                                        count = parseInt(count) + 1
+                                        $('#cartCount').html(count)
+
+                                    }
+                                }
+                            })
+                        };
+                    </script>
+
+

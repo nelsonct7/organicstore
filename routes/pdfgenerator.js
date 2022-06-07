@@ -153,10 +153,7 @@ router.get("/", verifyAdmin, async (req, res) => {
     });
 
   let order1 = await prhelper.getAllOrders();
-
-  console.log("\nExcel Data " + JSON.stringify(order1[0]));
   let pr = "";
-
   let orderXl = [];
   for (i = 0; i < order1.length; i++) {
     pr = "";
@@ -209,15 +206,14 @@ router.get("/view-reports", verifyAdmin,async (req, res) => {
 
 router.get("/yearPdf", verifyAdmin, async (req, res) => {
   try{
-    let yearOrder = await prhelper.getYearlyData();
-    if (yearOrder) {
-      let filename = generatePdf(yearOrder, "templateyear.html");
-  
-      res.render("admin/reports", {
+    let orders = await prhelper.getYearlyData();
+    if (orders) {
+      // let filename = generatePdf(yearOrder, "templateyear.html");
+      
+      res.render("admin/templateyear.hbs", {
         title: "Admin",
         admin: req.session.admin,
-        pdf: true,
-        path: filename,
+        orders
       });
     } else {
       res.redirect("/admin");
@@ -229,14 +225,13 @@ router.get("/yearPdf", verifyAdmin, async (req, res) => {
 
 router.get("/monthPdf", verifyAdmin, async (req, res) => {
   try{
-    let monthOrder = await prhelper.getMonthlyData();
-    if (monthOrder) {
-      let filename = generatePdf(monthOrder, "templatemonth.html");
-      res.render("admin/reports", {
+    let orders = await prhelper.getMonthlyData();
+    if (orders) {
+      // let filename = generatePdf(monthOrder, "templatemonth.html");
+      res.render("admin/templatemonth", {
         title: "Admin",
         admin: req.session.admin,
-        pdf: true,
-        path: filename,
+        orders
       });
     } else {
       res.redirect("/admin");
@@ -248,14 +243,12 @@ router.get("/monthPdf", verifyAdmin, async (req, res) => {
 
 router.get("/dayPdf", verifyAdmin, async (req, res) => {
   try{
-    let dailyOrder = await prhelper.getDailyData();
-    if (dailyOrder) {
-      let filename = generatePdf(dailyOrder, "templateday.html");
-      res.render("admin/reports", {
+    let orders = await prhelper.getDailyData();
+    if (orders) {
+      res.render("admin/templateday", {
         title: "Admin",
         admin: req.session.admin,
-        pdf: true,
-        path: filename,
+        orders
       });
     } else {
       res.redirect("/admin");
@@ -271,7 +264,6 @@ router.get("/yearXml", verifyAdmin, async (req, res) => {
     let yearOrder = await prhelper.getYearlyData();
     if (yearOrder) {
       let filename = generateXml(yearOrder);
-      console.log("rtrtrtrtrtrtrtrtrtrtr : " + filename);
       res.render("admin/reports", {
         title: "Admin",
         admin: req.session.admin,
@@ -319,26 +311,17 @@ router.get("/dayXml", verifyAdmin, async (req, res) => {
 router.post("/limitpdf", verifyAdmin, async (req, res) => {
   console.log("/nData");
   console.log(req.body);
-  let sDate = req.body.sdate;
-  let eDate = req.body.edate;
+  let sDate = req.body.startDate;
+  let eDate = req.body.endDate;
   let orders = await prhelper.getDateLimit(sDate, eDate);
   if (orders) {
-    let filename = generateLimidPdf(orders);
     console.log("\ndfdff : " + orders);
-    res.json({ status: true, file: filename });
+   res.render('admin/template',{title:'Admin',admin:req.session.admin,orders})
+  }else{
+    res.render('errors/error404',{title:'Error',admin:req.session.admin})
   }
 });
 
-router.post("/limitxml", verifyAdmin, async (req, res) => {
-  let sDate = req.body.sdate;
-  let eDate = req.body.edate;
-  let orders = await prhelper.getDateLimit(sDate, eDate);
-  if (orders) {
-    let filename = generateLimitXml(orders);
-    console.log("\ndfdff : " + filename);
-    res.json({ status: true, file: filename });
-  }
-});
 
 function generateXml(data) {
   return convertJsonToExcel(data);

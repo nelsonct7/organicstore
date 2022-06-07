@@ -36,7 +36,7 @@ function validatePayment(addressId){
                         text: "Order Placed Success fully",
                         icon: 'success',
                         showCancelButton: false,
-                        confirmButtonColor: '#11B619',
+                        confirmButtonColor: '#11B619', 
                         cancelButtonColor: '#A19391',
                         confirmButtonText: 'Ok'
                         }).then((result) => {

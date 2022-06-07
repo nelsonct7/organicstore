@@ -9,13 +9,11 @@
             <nav class="header-nav">
                 <div class="container-fluid">
                     <div class="hidden-md-down">
-
                         <div id="_desktop_user_info">
                             <div class="user-info-block selector-block">
                                 <div class="currency-selector localiz_block dropdown js-dropdown">
                                     <button data-target="#" data-toggle="dropdown" class=" btn-unstyle hidden-md-down">
-                                        <span class="expand-more">Setting</span>
-                                        
+                                        <span class="expand-more">Setting</span>   
                                     </button>
                                     <button data-target="#" data-toggle="dropdown" class=" btn-unstyle hidden-lg-up">
                                         <i class="ion-ios-contact"></i>
@@ -30,10 +28,7 @@
                                         </li>
                                         <li>
                                           {{#if user}}
-   
-                                               <button class="dropdown-item" rel="nofollow" onclick=" return doalert(event)"><span>Log out</span></button>
-                                                
-                                      
+                                               <button class="dropdown-item" rel="nofollow" onclick=" return doalert(event)"><span>Log out</span></button>                                      
                                           {{else}}
                                             <a href="/login" title="Log in to your customer account" rel="nofollow" class="dropdown-item">
                                                 <span>Sign in</span>
@@ -167,7 +162,6 @@
                 </div>
             </div>
         </header>
-
         <script>
             function doalert(e){
                Swal.fire({

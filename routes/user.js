@@ -128,59 +128,73 @@ router.get("/", async function (req, res, next) {
 });
 
 router.get("/login", async function (req, res) {
-  if (req.session.loggedIn) {
-    res.redirect("/");
-  } else {
-    let category = await prhelper.getAllCategory();
-    res.render("user/userlogin", {
-      logerr: req.session.userError,
-      category,
-    });
-    req.session.userError = false;
+  try{
+    if (req.session.loggedIn) {
+      res.redirect("/");
+    } else {
+      let category = await prhelper.getAllCategory();
+      res.render("user/userlogin", {
+        logerr: req.session.userError,
+        category,
+      });
+      req.session.userError = false;
+    }
+  }catch(err){
+    res.render('errors/error404')
   }
+  
 });
 
 router.post("/login", function (req, res, next) {
-  if (req.session.loggedIn) {
-    res.redirect("/");
-  } else {
-    usrhelper
-      .doLogin(req.body)
-      .then((response) => {
-        if (response.status) {
-          validTotp(req,res,response)
-          req.session.user = response;
-          // req.session.loggedIn = true;
-          // req.session.amountPay = null;
-          // res.redirect("/");
-        } else {
-          req.session.userError = true;
-          res.redirect("/login");
-        }
-      })
-      .catch((err) => {
-        res.render("errors/error404");
-      });
+  try{
+    if (req.session.loggedIn) {
+      res.redirect("/");
+    } else {
+      usrhelper
+        .doLogin(req.body)
+        .then((response) => {
+          if (response.status) {
+            validTotp(req,res,response)
+            req.session.user = response;
+            // req.session.loggedIn = true;
+            // req.session.amountPay = null;
+            // res.redirect("/");
+          } else {
+            req.session.userError = true;
+            res.redirect("/login");
+          }
+        })
+        .catch((err) => {
+          res.render("errors/error404");
+        });
+    }
+  }catch(err){
+    res.render('errors/error404')
   }
 });
 
 router.get("/signup", async function (req, res, next) {
-  if (req.session.loggedIn) {
-    res.redirect("/");
-  } else {
-    let category = await prhelper.getAllCategory();
-    prerr = req.session.prerror;
-    res.render("user/usersignup", {
-      title: "Signup",
-      prerr,
-      category,
-    });
-    req.session.prerror = false;
+  try{
+    if (req.session.loggedIn) {
+      res.redirect("/");
+    } else {
+      let category = await prhelper.getAllCategory();
+      prerr = req.session.prerror;
+      res.render("user/usersignup", {
+        title: "Signup",
+        prerr,
+        category,
+      });
+      req.session.prerror = false;
+    }
+  }catch(err){
+    res.render('errors/error404')
   }
+
 });
 
 router.post("/signup", function (req, res, next) {
-  
+
   usrhelper
     .userPresent(req.body.user_email)
     .then((response) => {
@@ -297,49 +311,58 @@ router.get("/view-product/:id", verifyLogin, async (req, res) => {
 // User Cart routers
 
 router.get("/check-out", verifyLogin, async (req, res) => {
-  let walletBalance = 0;
-  let wallet = (await usrhelper.getValetAmount(req.session.user._id)).toFixed(
-    2
-  );
-  if (wallet) {
-    walletBalance = wallet;
+  try{
+    let walletBalance = 0;
+    let wallet = (await usrhelper.getValetAmount(req.session.user._id)).toFixed(
+      2
+    );
+    if (wallet) {
+      walletBalance = wallet;
+    }
+    res.render("user/userCheckOut", {
+      title: "CheckOut",
+      user: req.session.user,
+      walletBalance,
+    });
+  }catch(err){
+    res.render('errors/error404')
   }
-  res.render("user/userCheckOut", {
-    title: "CheckOut",
-    user: req.session.user,
-    walletBalance,
-  });
+
 });
 
 router.get("/get-cart", verifyLogin, async (req, res) => {
-  let walletBalance = 0;
-  let wallet = await usrhelper.getValetAmount(req.session.user._id);
-  if (wallet) {
-    walletBalance = (
-      await usrhelper.getValetAmount(req.session.user._id)
-    ).toFixed(2);
-  }
-  let count = await usrhelper.getCartCount(req.session.user._id);
-  let category = await prhelper.getAllCategory();
-  if (count) {
-    let products = await usrhelper.getCartProducts(req.session.user._id);
-    let total = await usrhelper.findCartTotal(req.session.user._id);
-
-    res.render("user/userCart", {
-      title: "Cart",
-      user: req.session.user,
-      products,
-      total,
-      category,
-      walletBalance,
-    });
-  } else {
-    res.render("user/cart-empty", {
-      title: "Empty Cart",
-      user: req.session.user,
-      category,
-      walletBalance,
-    });
+  try{
+    let walletBalance = 0;
+    let wallet = await usrhelper.getValetAmount(req.session.user._id);
+    if (wallet) {
+      walletBalance = (
+        await usrhelper.getValetAmount(req.session.user._id)
+      ).toFixed(2);
+    }
+    let count = await usrhelper.getCartCount(req.session.user._id);
+    let category = await prhelper.getAllCategory();
+    if (count) {
+      let products = await usrhelper.getCartProducts(req.session.user._id);
+      let total = await usrhelper.findCartTotal(req.session.user._id);
+  
+      res.render("user/userCart", {
+        title: "Cart",
+        user: req.session.user,
+        products,
+        total,
+        category,
+        walletBalance,
+      });
+    } else {
+      res.render("user/cart-empty", {
+        title: "Empty Cart",
+        user: req.session.user,
+        category,
+        walletBalance,
+      });
+    }
+  }catch(err){
+    res.render('errors/error404')
   }
 });
 
@@ -382,32 +405,117 @@ router.get("/remove-item-from-cart/:id", verifyLogin, (req, res) => {
 });
 
 router.get("/find-total/:id", verifyLogin, async (req, res) => {
-  userId = req.params.id;
-  let walletBalance = 0;
-  let wallet = (await usrhelper.getValetAmount(req.session.user._id)).toFixed(
-    2
-  );
-  if (wallet) {
-    walletBalance = wallet;
+  try{
+    userId = req.params.id;
+    let walletBalance = 0;
+    let wallet = (await usrhelper.getValetAmount(req.session.user._id)).toFixed(
+      2
+    );
+    if (wallet) {
+      walletBalance = wallet;
+    }
+    let total = await usrhelper.findCartTotal(userId);
+    let address = await usrhelper.getAllAddressUser(userId);
+    let category = await prhelper.getAllCategory();
+    let amountPayable = parseFloat(total - walletBalance).toFixed(2);
+    if (amountPayable <= 0) {
+      amountPayable = 0;
+    }
+    if (address) {
+      res.render("user/check-out", {
+        title: "Check Out",
+        user: req.session.user,
+        total,
+        address,
+        category,
+        walletBalance,
+        amountPayable,
+      });
+    } else {
+      res.render("user/add-address", {
+        title: "Check Out",
+        user: req.session.user,
+        total,
+        category,
+        walletBalance,
+        amountPayable,
+      });
+    }
+  }catch(err){
+    res.render('errors/error404')
   }
-  let total = await usrhelper.findCartTotal(userId);
-  let address = await usrhelper.getAllAddressUser(userId);
-  let category = await prhelper.getAllCategory();
-  let amountPayable = parseFloat(total - walletBalance).toFixed(2);
-  if (amountPayable <= 0) {
-    amountPayable = 0;
+  
+});
+
+router.post("/proceed-to-payment", verifyLogin, async (req, res) => {
+  try{
+    let htotal = parseFloat(req.body.total);
+    let amountPay = parseFloat(req.body.amountPay);
+    let wallet = parseFloat(req.body.wallet);
+    let category = await prhelper.getAllCategory();
+    let walletBalance = 0;
+    let walletB = (await usrhelper.getValetAmount(req.session.user._id)).toFixed(2);
+    let paymentByWallet = false;
+    req.session.amountPay = amountPay;
+    if (walletB) {
+      walletBalance = walletB;
+    }
+    let user_id = req.session.user._id;
+    if (amountPay === 0) {
+      await usrhelper.updateWallet(wallet - htotal, req.session.user._id);
+      walletBalance = (
+        await usrhelper.getValetAmount(req.session.user._id)
+      ).toFixed(2);
+      paymentByWallet = true;
+    } else {
+      await usrhelper.updateWallet(0, req.session.user._id);
+      walletBalance = (
+        await usrhelper.getValetAmount(req.session.user._id)
+      ).toFixed(2);
+    }
+  
+    await usrhelper
+      .updateAddress(req.body)
+      .then(async (responce) => {
+        adr_id = responce.insertedId;
+        let details1 = await usrhelper.getUserAddress(adr_id);
+        let total = (await usrhelper.findCartTotal(user_id)).toFixed(2);
+        res.render("user/payment-confirm", {
+          title: "Payment",
+          user: req.session.user,
+          details: details1,
+          total,
+          category,
+          walletBalance,
+          amountPay,
+          paymentByWallet,
+        });
+      })
+      .catch((err) => {
+        res.render("errors/error404");
+      });
+  }catch(err){
+    res.render('errors/error404')
   }
-  if (address) {
-    res.render("user/check-out", {
-      title: "Check Out",
-      user: req.session.user,
-      total,
-      address,
-      category,
-      walletBalance,
-      amountPayable,
-    });
-  } else {
+
+});
+
+router.get("/proceed-to-payment", verifyLogin, async (req, res) => {
+  try{
+    let user_id = req.session.user._id;
+    let total = await usrhelper.findCartTotal(user_id);
+    let category = await prhelper.getAllCategory();
+    let walletBalance = 0;
+    let amountPayable = 0;
+    wallet = (await usrhelper.getValetAmount(req.session.user._id)).toFixed(2);
+    if (wallet) {
+      walletBalance = parseFloat(wallet).toFixed(2);
+    }
+    amountPayable = parseFloat(total - walletBalance).toFixed(2);
+    if (amountPayable <= 0) {
+      amountPayable = 0;
+    }
+  
     res.render("user/add-address", {
       title: "Check Out",
       user: req.session.user,
@@ -416,84 +524,19 @@ router.get("/find-total/:id", verifyLogin, async (req, res) => {
       walletBalance,
       amountPayable,
     });
-  }
-});
-
-router.post("/proceed-to-payment", verifyLogin, async (req, res) => {
-  let htotal = parseFloat(req.body.total);
-  let amountPay = parseFloat(req.body.amountPay);
-  let wallet = parseFloat(req.body.wallet);
-  let category = await prhelper.getAllCategory();
-  let walletBalance = 0;
-  let walletB = (await usrhelper.getValetAmount(req.session.user._id)).toFixed(2);
-  let paymentByWallet = false;
-  req.session.amountPay = amountPay;
-  if (walletB) {
-    walletBalance = walletB;
-  }
-  let user_id = req.session.user._id;
-  if (amountPay === 0) {
-    await usrhelper.updateWallet(wallet - htotal, req.session.user._id);
-    walletBalance = (
-      await usrhelper.getValetAmount(req.session.user._id)
-    ).toFixed(2);
-    paymentByWallet = true;
-  } else {
-    await usrhelper.updateWallet(0, req.session.user._id);
-    walletBalance = (
-      await usrhelper.getValetAmount(req.session.user._id)
-    ).toFixed(2);
+  }catch(err){
+    res.render('errors/error404')
   }
 
-  await usrhelper
-    .updateAddress(req.body)
-    .then(async (responce) => {
-      adr_id = responce.insertedId;
-      let details1 = await usrhelper.getUserAddress(adr_id);
-      let total = (await usrhelper.findCartTotal(user_id)).toFixed(2);
-      res.render("user/payment-confirm", {
-        title: "Payment",
-        user: req.session.user,
-        details: details1,
-        total,
-        category,
-        walletBalance,
-        amountPay,
-        paymentByWallet,
-      });
-    })
-    .catch((err) => {
-      res.render("errors/error404");
-    });
-});
-
-router.get("/proceed-to-payment", verifyLogin, async (req, res) => {
-  let user_id = req.session.user._id;
-  let total = await usrhelper.findCartTotal(user_id);
-  let category = await prhelper.getAllCategory();
-  let walletBalance = 0;
-  let amountPayable = 0;
-  wallet = (await usrhelper.getValetAmount(req.session.user._id)).toFixed(2);
-  if (wallet) {
-    walletBalance = parseFloat(wallet).toFixed(2);
-  }
-  amountPayable = parseFloat(total - walletBalance).toFixed(2);
-  if (amountPayable <= 0) {
-    amountPayable = 0;
-  }
-
-  res.render("user/add-address", {
-    title: "Check Out",
-    user: req.session.user,
-    total,
-    category,
-    walletBalance,
-    amountPayable,
-  });
 });
 
 router.post("/proceed-to-payment-address", verifyLogin, async (req, res) => {
-  console.log(req.body);
+  try{
+    
+  }catch(err){
+    res.render('error/error404')
+  }
+  
   let htotal = parseFloat(req.body.total);
   let amountPay = parseFloat(req.body.amountPay);
   let wallet = parseFloat(req.body.wallet);
@@ -591,7 +634,7 @@ router.post("/place-order", verifyLogin, async (req, res) => {
               });
             })
             .catch((err) => {
-              console.log("Error..: ");
+              res.render('errors/error404')
             });
         }
       })
@@ -654,7 +697,6 @@ router.get("/paypallSuccess", (req, res) => {
 });
 
 router.post("/verifyPayment", (req, res) => {
-  console.log("Data in router : " + JSON.stringify(req.body));
   let data = req.body;
   usrhelper
     .verifyPayment(data)

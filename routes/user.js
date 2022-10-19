@@ -138,7 +138,7 @@ router.get("/login", async function (req, res) {
         category,
       });
       req.session.userError = false;
-    }
+    } 
   }catch(err){
     res.render('errors/error404')
   }
@@ -594,7 +594,7 @@ router.post("/place-order", verifyLogin, async (req, res) => {
         if (amountPay > 0) {
           total = amountPay;
         }
-        console.log("/n : order id :" + orderId);
+       
         if (payment_option == "cod") {
           res.json({
             codSuccess: true,

@@ -9,7 +9,7 @@ function validatePayment(addressId){
         Swal.fire({
             title: 'Select',
             text: "Please select a payment option",
-            icon: 'warning',
+            icon: 'warning', 
             showCancelButton: false,
             confirmButtonColor: '#A19391',
             cancelButtonColor: '#A19391',
@@ -152,7 +152,7 @@ function validatePayment(addressId){
 function razorPayment(data,user){
     // console.log(JSON.stringify(data));
     var options = {
-        "key": "rzp_test_PXSooyoIiq4q2A", // Enter the Key ID generated from the Dashboard
+        "key": "rzp_test_A3kAE4aBSAMPDY", // Enter the Key ID generated from the Dashboard
         "amount": data.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
         "currency": "INR",
         "name": "Organic Store",

@@ -1,4 +1,4 @@
-var db = require('../config/connection');
+let db = require('../config/connection');
 const bcrypt = require('bcrypt');
 const {promise, reject} = require('bcrypt/promises');
 const async = require('hbs/lib/async');
@@ -6,19 +6,20 @@ const {response} = require('../app');
 const newdate = require('date-and-time')
 const Razorpay = require('razorpay');
 const paypal = require('paypal-rest-sdk');
-var objectId = require('mongodb').ObjectId
-var collection = require('../config/collections');
+let objectId = require('mongodb').ObjectId
+let collection = require('../config/collections');
 const { resolve } = require('node:path');
+require('dotenv').config()
 
-var instance = new Razorpay({
-    key_id: process.env.rz_key_id,
-    key_secret: process.env.rz_key_secret,
+var instance = new Razorpay({ 
+    key_id: 'rzp_test_A3kAE4aBSAMPDY',
+    key_secret: '170ZuLvqbsP0agmXHMHTv2qv',
   });
 
   paypal.configure({
     'mode': 'sandbox', //sandbox or live
-    'client_id': process.env.pay_client_id,
-    'client_secret': process.env.pay_client_secret
+    'client_id': '9TKH4AY9LDFJY',
+    'client_secret': 'access_token$sandbox$6ddmmsjrh8x7h9td$2cc7f02fc4c5b6f52ae350f5dc2fa8f3'
   });
 
 
@@ -875,7 +876,7 @@ module.exports = {
 
 
     generateRazor:(orderId,total)=>{
-        console.log('\nTotal : '+orderId);
+        
         return new Promise((resolve,reject)=>{
             var options = {
                 amount: total*100,  // amount in the smallest currency unit
@@ -901,7 +902,7 @@ module.exports = {
             
             return new Promise((resolve,reject)=>{
             const crypto = require('crypto')
-            let hmac = crypto.createHmac('sha256','aVa1964TkOSnoCdw15DjRTeM')
+            let hmac = crypto.createHmac('sha256','170ZuLvqbsP0agmXHMHTv2qv')
             hmac.update(data.resp.razorpay_order_id+'|'+data.resp.razorpay_payment_id)
             hmac = hmac.digest('hex')
             if(hmac==data.resp.razorpay_signature){
@@ -910,7 +911,7 @@ module.exports = {
             reject()
             }
             
-            })
+            }) 
     },
 
     changeStatus:(ordId)=>{
